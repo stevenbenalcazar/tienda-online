@@ -19,8 +19,7 @@ jobs:
         node-version: '16'
 
     - name: Install dependencies (opcional)
-      run: npm install
-      working-directory: ./js
+      run: echo "No se necesitan dependencias de Node.js"
 
     - name: Deploy to AWS EC2
       uses: appleboy/scp-action@v0.1.3
