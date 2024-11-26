@@ -33,4 +33,4 @@ jobs:
 
     - name: Restart EC2 Service (opcional para nginx/apache)
       run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ${{ ubuntu }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart nginx'
+        ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart nginx'
