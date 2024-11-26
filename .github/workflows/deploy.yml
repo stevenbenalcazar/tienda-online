@@ -1,0 +1,30 @@
+name: Deploy Tienda Online
+
+on:
+  push:
+    branches:
+      - main  # Se ejecutará cada vez que hagas push a la rama `main`.
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Usaremos una máquina virtual Linux en GitHub Actions.
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3  # Clonar el repositorio en la máquina virtual.
+
+    - name: Set up SSH Agent
+      uses: webfactory/ssh-agent@v0.5.3  # Configurar el agente SSH para autenticar con EC2.
+      with:
+        ssh-private-key: ${{ secrets.EC2_KEY }}  # Llave SSH privada almacenada en los secretos.
+
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          sudo rm -rf /var/www/html/tienda-online/*  # Limpiar la carpeta de la tienda online.
+        EOF
+        scp -r ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/html/tienda-online/
+
+    - name: Restart NGINX
+      run: |
+        ssh -o StrictHostKey
