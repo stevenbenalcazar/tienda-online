@@ -3,28 +3,34 @@ name: Deploy Tienda Online
 on:
   push:
     branches:
-      - main  # Se ejecutará cada vez que hagas push a la rama `main`.
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Usaremos una máquina virtual Linux en GitHub Actions.
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3  # Clonar el repositorio en la máquina virtual.
+    - name: Checkout the code
+      uses: actions/checkout@v3
 
-    - name: Set up SSH Agent
-      uses: webfactory/ssh-agent@v0.5.3  # Configurar el agente SSH para autenticar con EC2.
+    - name: Setup Node.js (opcional si usas npm o dependencias JS)
+      uses: actions/setup-node@v3
       with:
-        ssh-private-key: ${{ secrets.EC2_KEY }}  # Llave SSH privada almacenada en los secretos.
+        node-version: '16'
 
-    - name: Deploy to EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-          sudo rm -rf /var/www/html/tienda-online/*  # Limpiar la carpeta de la tienda online.
-        EOF
-        scp -r ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/html/tienda-online/
+    - name: Install dependencies (opcional)
+      run: npm install
+      working-directory: ./js
 
-    - name: Restart NGINX
-      run: |
-        ssh -o StrictHostKey
+    - name: Deploy to AWS EC2
+      uses: appleboy/scp-action@v0.1.3
+      with:
+        host: ${{ 3.85.86.233 }}
+        username: ${{ ubuntu }}
+        key: ${{ secrets.EC2_KEY }}
+        source: "./"
+        target: "/var/www/html/tienda-online"
+
+    - name: Restart EC2 Service (opcional para nginx/apache)
+      run: ssh -i ${{ secrets.EC2_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart nginx'
+
