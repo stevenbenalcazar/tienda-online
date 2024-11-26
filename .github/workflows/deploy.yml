@@ -28,8 +28,8 @@ jobs:
         host: ${{ secrets.EC_HOST }}        # IP pública de tu instancia EC2
         username: ${{ secrets.EC2_USER }}    # Usuario SSH, por ejemplo: ec2-user o ubuntu
         key: ${{ secrets.EC2_KEY }}          # Clave privada SSH desde los secretos de GitHub
-        source: "./index.html"                         # Fuente, que es el directorio actual en tu repositorio
-        target: "/var/www/html/tienda-online" # Directorio destino en tu EC2
+        source: "./"                         # Fuente, que es el directorio actual en tu repositorio
+        target: "/var/www/html" # Directorio destino en tu EC2
 
     - name: Restart EC2 Service (opcional para nginx/apache)
       run: |
