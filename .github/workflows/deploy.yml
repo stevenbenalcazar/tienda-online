@@ -25,12 +25,12 @@ jobs:
     - name: Deploy to AWS EC2
       uses: appleboy/scp-action@v0.1.3
       with:
-        host: ${{ 3.85.86.233 }}
-        username: ${{ ubuntu }}
-        key: ${{ secrets.EC2_KEY }}
-        source: "./"
-        target: "/var/www/html/tienda-online"
+        host: ${{ 3.85.86.233 }}        # IP pública de tu instancia EC2
+        username: ${{ ubuntu }}    # Usuario SSH, por ejemplo: ec2-user o ubuntu
+        key: ${{ secrets.EC2_KEY }}          # Clave privada SSH desde los secretos de GitHub
+        source: "./index.html"                         # Fuente, que es el directorio actual en tu repositorio
+        target: "/var/www/html/tienda-online" # Directorio destino en tu EC2
 
     - name: Restart EC2 Service (opcional para nginx/apache)
-      run: ssh -i ${{ secrets.EC2_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart nginx'
-
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart nginx'
