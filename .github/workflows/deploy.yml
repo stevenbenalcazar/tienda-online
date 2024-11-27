@@ -24,7 +24,7 @@ jobs:
     - name: Deploy to AWS EC2
       uses: appleboy/scp-action@v0.1.3
       with:
-        host: ${{ secrets.EC_HOST }}        # IP pública de tu instancia EC2
+        host: ${{ secrets.EC2_HOST }}        # IP pública de tu instancia EC2
         username: ${{ secrets.EC2_USER }}    # Usuario SSH, por ejemplo: ec2-user o ubuntu
         key: ${{ secrets.EC2_KEY }}          # Clave privada SSH desde los secretos de GitHub
         source: "./"                         # Fuente, que es el directorio actual en tu repositorio
