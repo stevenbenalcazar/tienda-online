@@ -30,6 +30,6 @@ jobs:
         source: "./"                         # Fuente, que es el directorio actual en tu repositorio
         target: "/var/www/html" # Directorio destino en tu EC2
 
-    - name: Restart EC2 Service (opcional para nginx/apache)
-      run: |
-        ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart nginx'
+    # - name: Restart EC2 Service (opcional para nginx/apache)
+    #   run: |
+    #     ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart nginx'
