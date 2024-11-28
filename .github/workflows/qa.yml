@@ -29,6 +29,9 @@ jobs:
         key: ${{ secrets.EC2_KEY }}          # Clave privada SSH desde los secretos de GitHub
         source: "./"                         # Fuente, que es el directorio actual en tu repositorio
         target: "/var/www/html" # Directorio destino en tu EC2
+        port: 22
+        create: true # para crear carpetas de destino si no existen
+        debug: true # para ver más detalles
 
     # - name: Restart EC2 Service (opcional para nginx/apache)
     #   run: |
