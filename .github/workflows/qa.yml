@@ -3,7 +3,7 @@ name: Deploy Tienda Online
 on:
   push:
     branches:
-      - work
+      - QA
 
 jobs:
   deploy:
