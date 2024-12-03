@@ -1,0 +1,35 @@
+name: Deploy Tienda Online
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js (opcional si usas npm o dependencias JS)
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install dependencies (opcional)
+      run: echo "No se necesitan dependencias de Node.js"
+
+    - name: Deploy to AWS EC2
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.EC2_HOST }}        # IP pública de tu instancia EC2
+        username: ${{ secrets.EC2_USER }}    # Usuario SSH, por ejemplo: ec2-user o ubuntu
+        key: ${{ secrets.EC2_KEY }}          # Clave privada SSH desde los secretos de GitHub
+        source: "./"                         # Fuente, que es el directorio actual en tu repositorio
+        target: "/var/www/html" # Directorio destino en tu EC2
+
+    # - name: Restart EC2 Service (opcional para nginx/apache)
+    #   run: |
+    #     ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart nginx'
