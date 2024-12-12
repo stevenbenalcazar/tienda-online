@@ -1,0 +1,35 @@
+name: Deploy Tienda Online
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js (opcional si usas npm o dependencias JS)
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install dependencies (opcional)
+      run: echo "No se necesitan dependencias de Node.js"
+    
+    
+    - name: Deploy to AWS EC2 instances
+      run: |
+        for host in ${{ secrets.EC2_HOST3 }} ${{ secrets.EC2_HOST4 }}; do
+          echo "Deploying to $host"
+          scp -r -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ./ ${{ secrets.EC2_USER }}@$host:/var/www/html || echo "Error deploying to $host"
+        done
+
+
+    # - name: Restart EC2 Service (opcional para nginx/apache)
+    #   run: |
+    #     ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST4, secrets.EC2_HOST3 }}  'sudo systemctl restart nginx'
