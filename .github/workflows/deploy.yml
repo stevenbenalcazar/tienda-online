@@ -21,15 +21,12 @@ jobs:
     - name: Install dependencies (opcional)
       run: echo "No se necesitan dependencias de Node.js"
 
-    - name: Deploy to AWS EC2
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        host2: ${{ secrets.EC2_HOST2 }}         # IP pública de tu instancia EC2
-        username: ${{ secrets.EC2_USER }}    # Usuario SSH, por ejemplo: ec2-user o ubuntu
-        key: ${{ secrets.EC2_KEY }}          # Clave privada SSH desde los secretos de GitHub
-        source: "./"                         # Fuente, que es el directorio actual en tu repositorio
-        target: "/var/www/html" # Directorio destino en tu EC2
+    - name: Deploy to AWS EC2 instances
+      run: |
+        for host in ${{ secrets.EC2_HOST }} ${{ secrets.EC2_HOST2 }}; do
+          echo "Deploying to $host"
+          scp -r -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ./ ${{ secrets.EC2_USER }}@$host:/var/www/html || echo "Error deploying to $host"
+        done
 
     # - name: Restart EC2 Service (opcional para nginx/apache)
     #   run: |

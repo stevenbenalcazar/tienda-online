@@ -1,7 +1,7 @@
 name: Deploy Tienda Online
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -20,20 +20,16 @@ jobs:
 
     - name: Install dependencies (opcional)
       run: echo "No se necesitan dependencias de Node.js"
+    
+    
+    - name: Deploy to AWS EC2 instances
+      run: |
+        for host in ${{ secrets.EC2_HOST3 }} ${{ secrets.EC2_HOST4 }}; do
+          echo "Deploying to $host"
+          scp -r -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ./ ${{ secrets.EC2_USER }}@$host:/var/www/html || echo "Error deploying to $host"
+        done
 
-    - name: Deploy to AWS EC2
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.EC2_HOST3 }} 
-        host2: ${{ secrets.EC2_HOST4 }}        # IP pública de tu instancia EC2
-        username: ${{ secrets.EC2_USER2 }}    # Usuario SSH, por ejemplo: ec2-user o ubuntu
-        key: ${{ secrets.EC2_KEY }}          # Clave privada SSH desde los secretos de GitHub
-        source: "./"                         # Fuente, que es el directorio actual en tu repositorio
-        target: "/var/www/html" # Directorio destino en tu EC2
-        port: 22
-        create: true # para crear carpetas de destino si no existen
-        debug: true # para ver más detalles
 
     # - name: Restart EC2 Service (opcional para nginx/apache)
     #   run: |
-    #     ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} 'sudo systemctl restart nginx'
+    #     ssh -o StrictHostKeyChecking=no -i ${{ secrets.EC2_KEY }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST4, secrets.EC2_HOST3 }}  'sudo systemctl restart nginx'
